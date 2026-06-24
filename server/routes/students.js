@@ -1,6 +1,15 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 const { db } = require('../database');
+
+// Generate a random alphanumeric password of given length
+function generatePassword(len = 10) {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789@#';
+  let pwd = '';
+  for (let i = 0; i < len; i++) pwd += chars[Math.floor(Math.random() * chars.length)];
+  return pwd;
+}
 
 // GET /api/students
 router.get('/', (req, res) => {
@@ -83,8 +92,9 @@ router.post('/', (req, res) => {
       return res.status(500).json({ error: err.message });
     }
     
-    // Return the newly created student object
-    db.get('SELECT * FROM students WHERE id = ?', [this.lastID], (getErr, row) => {
+    // Return the newly created student object and auto-create login credentials
+    const studentId = this.lastID;
+    db.get('SELECT * FROM students WHERE id = ?', [studentId], (getErr, row) => {
       if (getErr) return res.status(500).json({ error: getErr.message });
       if (!row) {
         return res.status(404).json({ error: 'Failed to retrieve the created student record.' });
@@ -93,7 +103,37 @@ router.post('/', (req, res) => {
       if (row.json_details) {
         try { extra = JSON.parse(row.json_details); } catch(e) {}
       }
-      res.status(201).json({ ...extra, ...row });
+      const studentObj = { ...extra, ...row };
+
+      // Auto-generate login credentials
+      const loginUsername = row.scholar_no;  // Scholar No is the username
+      const plainPassword = generatePassword(10);
+      const passwordHash  = bcrypt.hashSync(plainPassword, 10);
+
+      // Insert into users table (ignore if already exists so re-runs don't fail)
+      db.run(
+        `INSERT OR IGNORE INTO users (username, password_hash, role) VALUES (?, ?, 'Student')`,
+        [loginUsername, passwordHash],
+        function(userErr) {
+          if (userErr) {
+            // Even if user creation fails, return the student record with a warning
+            return res.status(201).json({
+              ...studentObj,
+              credentialWarning: 'Student saved but login account could not be created: ' + userErr.message
+            });
+          }
+          // Return student data plus the plain-text credentials for display
+          return res.status(201).json({
+            ...studentObj,
+            credentials: {
+              username: loginUsername,
+              password: plainPassword,
+              role: 'Student',
+              portal: 'Student Portal'
+            }
+          });
+        }
+      );
     });
   });
 });

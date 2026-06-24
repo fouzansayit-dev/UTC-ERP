@@ -15,8 +15,11 @@ const INIT = {
 };
 
 export default function NewEmployee() {
-  const [form, setForm] = useState(INIT);
-  const [errors, setErrors] = useState({});
+  const [form, setForm]           = useState(INIT);
+  const [errors, setErrors]       = useState({});
+  const [credentials, setCredentials] = useState(null);
+  const [saveError, setSaveError] = useState(null);
+  const [copied, setCopied]       = useState('');
   const set = (k) => (e) => setForm(p => ({ ...p, [k]: e.target.value }));
 
   const validate = () => {
@@ -33,26 +36,102 @@ export default function NewEmployee() {
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setErrors({});
-    
+    setSaveError(null);
+
     fetch('/api/hr', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form)
     })
       .then(async (res) => {
-        const data = await res.json();
+        let data = {};
+        const ct = res.headers.get('content-type');
+        if (ct && ct.includes('application/json')) {
+          try { data = await res.json(); } catch(ex) {}
+        } else {
+          const t = await res.text();
+          data = { error: t || 'Unknown server error' };
+        }
         if (!res.ok) throw new Error(data.error || 'Failed to save employee');
-        alert('Employee saved successfully!');
+        if (data.credentials) {
+          setCredentials({ employeeName: data.name, ...data.credentials });
+        } else {
+          setCredentials({ employeeName: data.name, plain: true });
+        }
         setForm(INIT);
       })
-      .catch(err => {
-        alert(err.message);
-      });
+      .catch(err => setSaveError(err.message));
   };
 
+  const copy = (label, text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(label);
+      setTimeout(() => setCopied(''), 2000);
+    });
+  };
+
+  // -- Credential display after successful save --
+  if (credentials) {
+    return (
+      <div className="hr-form" style={{ maxWidth: 640 }}>
+        <div style={empStyles.successBanner}>
+          <span style={{ fontSize: 28 }}>✓</span>
+          <div>
+            <div style={empStyles.successTitle}>Employee Added Successfully!</div>
+            <div style={empStyles.successSub}>
+              {credentials.employeeName} has been registered. Share the credentials below.
+            </div>
+          </div>
+        </div>
+
+        {credentials.plain ? (
+          <p style={{ color: '#6b7280', fontSize: 14 }}>Employee account created.</p>
+        ) : (
+          <div style={empStyles.credCard}>
+            <div style={empStyles.credHeader}>🔐 Login Credentials</div>
+            <div style={empStyles.credBody}>
+              <EmpCredRow label="Login ID (Username)" value={credentials.username} copied={copied} onCopy={copy} />
+              <EmpCredRow label="Password"             value={credentials.password} copied={copied} onCopy={copy} secret />
+              <EmpCredRow label="Role / Portal"        value={credentials.role}     copied={copied} onCopy={copy} />
+            </div>
+            <div style={empStyles.credNote}>
+              ⚠️ Please save or print these credentials. The password cannot be retrieved later.
+            </div>
+          </div>
+        )}
+
+        <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+          <button className="submit-btn" onClick={() => { setCredentials(null); setSaveError(null); }}>
+            + Add Another Employee
+          </button>
+          {credentials.username && (
+            <button
+              className="submit-btn"
+              style={{ background: '#6b7280' }}
+              onClick={() => {
+                const text =
+                  `UCT ERP — Employee Login Credentials\n` +
+                  `Employee: ${credentials.employeeName}\n` +
+                  `Login ID: ${credentials.username}\n` +
+                  `Password: ${credentials.password}\n` +
+                  `Portal: ${credentials.portal}`;
+                navigator.clipboard.writeText(text);
+                setCopied('ALL'); setTimeout(() => setCopied(''), 2500);
+              }}
+            >
+              {copied === 'ALL' ? '✓ Copied All!' : '📋 Copy All'}
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
+    <>
+    {saveError && (
+      <div style={empStyles.errorBanner}>⚠ {saveError}</div>
+    )}
     <form className="hr-form" onSubmit={handleSubmit}>
       <SectionTitle title="Basic Information" />
       <div className="form-grid">
@@ -141,5 +220,62 @@ export default function NewEmployee() {
 
       <SubmitBtn label="Save Employee" />
     </form>
+    </>
   );
 }
+
+function EmpCredRow({ label, value, copied, onCopy, secret }) {
+  const [show, setShow] = React.useState(!secret);
+  const isCopied = copied === label;
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+      <div style={{ fontSize: 12, fontWeight: 600, color: '#6b7280', minWidth: 160 }}>{label}</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <code style={{ background: '#f8faff', border: '1px solid #e0e7ff', borderRadius: 6, padding: '5px 10px', fontSize: 14, fontFamily: 'monospace', color: '#1e1b4b' }}>
+          {secret && !show ? '••••••••••' : value}
+        </code>
+        {secret && (
+          <button style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16 }} onClick={() => setShow(s => !s)}>
+            {show ? '🙈' : '👁'}
+          </button>
+        )}
+        <button
+          style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: isCopied ? '#16a34a' : '#4361ee' }}
+          onClick={() => onCopy(label, value)}
+        >
+          {isCopied ? '✓' : '📋'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+const empStyles = {
+  successBanner: {
+    display: 'flex', alignItems: 'flex-start', gap: 14,
+    background: 'linear-gradient(135deg, #dcfce7, #f0fdf4)',
+    border: '1px solid #86efac', borderRadius: 10,
+    padding: '14px 18px', marginBottom: 20
+  },
+  successTitle: { fontWeight: 700, fontSize: 16, color: '#15803d' },
+  successSub:   { fontSize: 13, color: '#166534', marginTop: 2 },
+  credCard: {
+    border: '1.5px solid #c7d2fe', borderRadius: 12,
+    overflow: 'hidden', marginBottom: 8
+  },
+  credHeader: {
+    background: 'linear-gradient(135deg, #4361ee, #7c3aed)',
+    color: '#fff', padding: '10px 16px',
+    fontWeight: 700, fontSize: 15
+  },
+  credBody:  { padding: '14px 16px' },
+  credNote: {
+    background: '#fefce8', borderTop: '1px solid #fde047',
+    color: '#92400e', fontSize: 12, padding: '8px 16px'
+  },
+  errorBanner: {
+    background: '#fef2f2', border: '1px solid #fecaca',
+    color: '#dc2626', borderRadius: 8,
+    padding: '10px 14px', marginBottom: 14, fontSize: 13
+  }
+};

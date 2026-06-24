@@ -1,6 +1,27 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 const { db } = require('../database');
+
+// Generate a random alphanumeric password
+function generatePassword(len = 10) {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789@#';
+  let pwd = '';
+  for (let i = 0; i < len; i++) pwd += chars[Math.floor(Math.random() * chars.length)];
+  return pwd;
+}
+
+// Map employee department to portal role
+function deptToRole(department) {
+  if (!department) return 'Staff/Faculty';
+  const d = department.toLowerCase();
+  if (d.includes('hr'))          return 'HR';
+  if (d.includes('account'))     return 'Accounts';
+  if (d.includes('transport'))   return 'Transport';
+  if (d.includes('admin'))       return 'Administrator';
+  // Academics / Library / Hostel / International all map to Staff/Faculty
+  return 'Staff/Faculty';
+}
 
 // GET /api/hr
 router.get('/', (req, res) => {
@@ -62,13 +83,43 @@ router.post('/', (req, res) => {
   db.run(query, params, function(err) {
     if (err) return res.status(500).json({ error: err.message });
     
-    db.get('SELECT * FROM employees WHERE id = ?', [this.lastID], (getErr, row) => {
+    const empId = this.lastID;
+    db.get('SELECT * FROM employees WHERE id = ?', [empId], (getErr, row) => {
       if (getErr) return res.status(500).json({ error: getErr.message });
       let extra = {};
       if (row.json_details) {
         try { extra = JSON.parse(row.json_details); } catch(e) {}
       }
-      res.status(201).json({ ...extra, ...row });
+      const empObj = { ...extra, ...row };
+
+      // Auto-generate login credentials
+      const role = deptToRole(department);
+      // Use email as username if provided, otherwise generate EMP-<id>
+      const loginUsername = (email && email.trim()) ? email.trim() : `EMP-${empId}`;
+      const plainPassword  = generatePassword(10);
+      const passwordHash   = bcrypt.hashSync(plainPassword, 10);
+
+      db.run(
+        `INSERT OR IGNORE INTO users (username, password_hash, role) VALUES (?, ?, ?)`,
+        [loginUsername, passwordHash, role],
+        function(userErr) {
+          if (userErr) {
+            return res.status(201).json({
+              ...empObj,
+              credentialWarning: 'Employee saved but login account could not be created: ' + userErr.message
+            });
+          }
+          return res.status(201).json({
+            ...empObj,
+            credentials: {
+              username: loginUsername,
+              password: plainPassword,
+              role: role,
+              portal: role + ' Portal'
+            }
+          });
+        }
+      );
     });
   });
 });
