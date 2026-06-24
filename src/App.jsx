@@ -274,7 +274,7 @@ const ALLOWED_SUBS = {
   },
   'Staff/Faculty': {
     'dashboard': ['dash-circular', 'dash-assign', 'dash-birthday', 'dash-rfid', 'dash-enquiry'],
-    'student': ['stu-edit', 'stu-search', 'stu-attendance', 'stu-leave', 'stu-reports'],
+    'student': ['stu-add', 'stu-edit', 'stu-search', 'stu-attendance', 'stu-leave', 'stu-reports'],
   }
 };
 
