@@ -60,8 +60,8 @@ router.post('/', (req, res) => {
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
   const params = [
     scholar_no, 
-    enroll_no || '', 
-    roll_no || '', 
+    enroll_no || null, 
+    roll_no || null, 
     name, 
     course, 
     branch, 
@@ -86,6 +86,9 @@ router.post('/', (req, res) => {
     // Return the newly created student object
     db.get('SELECT * FROM students WHERE id = ?', [this.lastID], (getErr, row) => {
       if (getErr) return res.status(500).json({ error: getErr.message });
+      if (!row) {
+        return res.status(404).json({ error: 'Failed to retrieve the created student record.' });
+      }
       let extra = {};
       if (row.json_details) {
         try { extra = JSON.parse(row.json_details); } catch(e) {}
@@ -133,13 +136,16 @@ router.put('/:id', (req, res) => {
                  due_fee = ?,
                  json_details = ?
                  WHERE id = ?`;
-  const params = [scholar_no, enroll_no, roll_no, name, course, branch, batch, category, caste, religion, admission_date, status, due_fee, json_details, id];
+  const params = [scholar_no, enroll_no || null, roll_no || null, name, course, branch, batch, category, caste, religion, admission_date, status, due_fee, json_details, id];
 
   db.run(query, params, function(err) {
     if (err) return res.status(500).json({ error: err.message });
     
     db.get('SELECT * FROM students WHERE id = ?', [id], (getErr, row) => {
       if (getErr) return res.status(500).json({ error: getErr.message });
+      if (!row) {
+        return res.status(404).json({ error: 'Failed to retrieve the updated student record.' });
+      }
       let extra = {};
       if (row.json_details) {
         try { extra = JSON.parse(row.json_details); } catch(e) {}

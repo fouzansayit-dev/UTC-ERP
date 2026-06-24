@@ -14,7 +14,19 @@ export default function AddStudent() {
       body: JSON.stringify(data)
     })
       .then(async (res) => {
-        const body = await res.json();
+        let body = {};
+        const contentType = res.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          try {
+            body = await res.json();
+          } catch (e) {
+            // fallback
+          }
+        } else {
+          const text = await res.text();
+          body = { error: text || 'Unknown server error' };
+        }
+
         if (!res.ok) {
           throw new Error(body.error || 'Failed to add student');
         }
