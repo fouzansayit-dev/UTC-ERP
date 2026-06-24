@@ -1,0 +1,59 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'Inter', 'Nunito Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f8fafc;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Smooth focus ring */
+:focus-visible {
+  outline: 2px solid #4361ee;
+  outline-offset: 2px;
+}
+
+/* Remove default focus ring for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Smooth selection */
+::selection {
+  background: rgba(67, 97, 238, 0.15);
+  color: #1e293b;
+}
+
+/* Global transition for interactive elements */
+button, input, select, textarea, a {
+  font-family: inherit;
+}
+
+/* Prevent layout shift on scrollbar appear */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* Custom scrollbar globally */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Page transition keyframe available globally */
+@keyframes pageSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

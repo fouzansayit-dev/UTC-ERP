@@ -1,0 +1,147 @@
+/* Consultant & Agent Admissions Style Sheet */
+
+.cons-module {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #1e293b;
+}
+
+.cons-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cons-btn-primary {
+  background: linear-gradient(135deg, #0d5ef4, #004ac2);
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(13, 94, 244, 0.2);
+}
+.cons-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(13, 94, 244, 0.3);
+}
+
+.cons-btn-secondary {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+.cons-btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+.cons-form .form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media(max-width: 640px) {
+  .cons-form .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cons-form .form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cons-form label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.cons-form input, .cons-form select {
+  padding: 8px 12px;
+  font-size: 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.cons-form input:focus, .cons-form select:focus {
+  border-color: #0d5ef4;
+}
+
+/* Table Design */
+.cons-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  text-align: left;
+}
+
+.cons-table th {
+  padding: 12px;
+  background: #f8fafc;
+  border-bottom: 1.5px solid #e2e8f0;
+  font-weight: 600;
+  color: #475569;
+}
+
+.cons-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+}
+
+.cons-table tr:hover td {
+  background-color: #f8fafc;
+}
+
+.badge-btn {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: none;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-size: 11px;
+  transition: all 0.2s ease;
+}
+.badge-btn:hover {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.status-pill {
+  display: inline-flex;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 9999px;
+  text-transform: capitalize;
+}
+.status-pill.active {
+  background: #dcfce7;
+  color: #15803d;
+}
+.status-pill.inactive {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.action-btn-danger {
+  background: transparent;
+  border: none;
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+}
+.action-btn-danger:hover {
+  text-decoration: underline;
+}

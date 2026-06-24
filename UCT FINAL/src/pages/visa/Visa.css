@@ -1,0 +1,315 @@
+/* ══════════════════════════════════════════
+   VISA & IMMIGRATION MODULE — shared styles
+   Mirrors Student / HR module conventions
+══════════════════════════════════════════ */
+
+/* ── Filter / Search card ── */
+.visa-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+.visa-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  transform: scale(1.002);
+}
+
+.visa-card-header {
+  background: #1e293b;
+  color: #fff;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.visa-card-header.indigo  { background: #4338ca; }
+.visa-card-header.violet  { background: #7c3aed; }
+.visa-card-header.teal    { background: #0f766e; }
+.visa-card-header.rose    { background: #be123c; }
+
+.visa-card-body {
+  padding: 20px 24px;
+}
+
+/* ── Section headers inside forms ── */
+.visa-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+  background: #f1f5f9;
+  border-left: 4px solid #4361ee;
+  padding: 8px 14px;
+  margin: 24px 0 16px;
+  border-radius: 0 4px 4px 0;
+  letter-spacing: 0.02em;
+}
+
+/* ── Grid layout ── */
+.visa-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 24px;
+}
+@media (max-width: 700px) {
+  .visa-grid { grid-template-columns: 1fr; }
+}
+.visa-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px 24px;
+}
+@media (max-width: 900px) {
+  .visa-grid-3 { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .visa-grid-3 { grid-template-columns: 1fr; }
+}
+.visa-full { grid-column: 1 / -1; }
+
+/* ── Fields ── */
+.visa-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.visa-field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+}
+.visa-field input,
+.visa-field select,
+.visa-field textarea {
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+  color: #111;
+  outline: none;
+  transition: border 0.18s, box-shadow 0.18s;
+  background: #fff;
+}
+.visa-field input:focus,
+.visa-field select:focus,
+.visa-field textarea:focus {
+  border-color: #4361ee;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+.visa-field input[readonly],
+.visa-field input:disabled {
+  background: #f3f4f6;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+.visa-field textarea { resize: vertical; min-height: 80px; }
+
+/* ── File upload ── */
+.visa-file-wrap {
+  border: 2px dashed #d1d5db;
+  border-radius: 6px;
+  padding: 14px;
+  text-align: center;
+  font-size: 13px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+.visa-file-wrap:hover {
+  border-color: #4361ee;
+  background: #eef0fd;
+}
+.visa-file-wrap input { display: none; }
+
+/* ── Checkbox group ── */
+.visa-check-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  padding: 8px 0;
+}
+.visa-check-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+}
+.visa-check-item input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: #4361ee;
+  cursor: pointer;
+}
+
+/* ── Buttons ── */
+.visa-btn {
+  padding: 8px 22px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+}
+.visa-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+.visa-btn:active { transform: translateY(0); }
+.visa-btn-primary   { background: #4361ee; color: #fff; }
+.visa-btn-secondary { background: #6b7280; color: #fff; }
+.visa-btn-success   { background: #16a34a; color: #fff; }
+.visa-btn-danger    { background: #dc2626; color: #fff; }
+.visa-btn-sm { padding: 5px 14px; font-size: 13px; }
+
+.visa-btn-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 16px 0 4px;
+}
+
+/* ── Table ── */
+.visa-table-wrap {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.visa-table-title {
+  background: #1e293b;
+  color: #fff;
+  padding: 11px 18px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.visa-table-title.indigo { background: #4338ca; }
+.visa-table-title.violet { background: #7c3aed; }
+.visa-table-title.teal   { background: #0f766e; }
+
+.visa-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.visa-table th {
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  font-size: 13px;
+  background: #f8fafc;
+  border-bottom: 2px solid #e5e7eb;
+  white-space: nowrap;
+}
+.visa-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+}
+.visa-table tbody tr:nth-child(even) td { background: #f9fafb; }
+.visa-table tbody tr:hover td { background: #eef0fd; }
+.visa-table .empty-row td {
+  text-align: center;
+  padding: 36px;
+  color: #9ca3af;
+}
+
+/* ── Status badges ── */
+.visa-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+.visa-badge-pending    { background: #fef3c7; color: #92400e; }
+.visa-badge-approved   { background: #dcfce7; color: #15803d; }
+.visa-badge-rejected   { background: #fee2e2; color: #b91c1c; }
+.visa-badge-processing { background: #eef0fd; color: #3a0ca3; }
+.visa-badge-expired    { background: #f3f4f6; color: #374151; }
+.visa-badge-renewal    { background: #f5f3ff; color: #6d28d9; }
+.visa-badge-booked     { background: #ecfdf5; color: #065f46; }
+.visa-badge-submitted  { background: #e0f2fe; color: #0369a1; }
+
+/* ── KPI summary cards ── */
+.visa-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+@media (max-width: 700px) {
+  .visa-kpi-row { grid-template-columns: 1fr; }
+}
+.visa-kpi-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 20px 20px 18px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+.visa-kpi-card:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  transform: scale(1.01);
+}
+.visa-kpi-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+.visa-kpi-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.visa-kpi-sub {
+  font-size: 12.5px;
+  color: #9ca3af;
+}
+
+/* ── Rejection conditional block ── */
+.visa-rejection-block {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-top: 4px;
+}
+
+/* ── Workflow stage table ── */
+.visa-stage-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #e0e7ff;
+  color: #4338ca;
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-right: 6px;
+}
+
+/* ── Alert matrix info strip ── */
+.visa-info-strip {
+  background: #eef0fd;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #3a0ca3;
+  margin-bottom: 20px;
+}

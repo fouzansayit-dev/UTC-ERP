@@ -1,0 +1,223 @@
+/* Fee Receipt Print & Modal Layout styling */
+
+.fee-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px 20px;
+  margin-bottom: 16px;
+}
+
+/* Modal Overlay styling */
+.print-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 99999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.print-modal-box {
+  background: #ffffff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  padding: 24px;
+}
+
+.print-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px dashed #e2e8f0;
+  padding-bottom: 12px;
+}
+
+/* Premium invoice layout */
+.invoice-print-container {
+  background: #fff;
+  color: #1e293b;
+  font-family: 'Inter', system-ui, sans-serif;
+  border: 1px solid #e2e8f0;
+  padding: 40px;
+  border-radius: 8px;
+}
+
+.invoice-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 2px solid #0f172a;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.invoice-header .brand-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  background: #0f172a;
+  color: #fff;
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.invoice-header .brand-title h1 {
+  font-size: 20px;
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.invoice-header .brand-title p {
+  margin: 2px 0 0 0;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.invoice-title {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.invoice-title h2 {
+  font-size: 18px;
+  font-weight: 800;
+  border-bottom: 1px solid #0f172a;
+  display: inline-block;
+  padding-bottom: 4px;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.invoice-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-size: 12px;
+  gap: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.invoice-meta-grid p {
+  margin: 4px 0;
+  color: #475569;
+}
+
+.invoice-meta-grid strong {
+  color: #0f172a;
+}
+
+.invoice-details {
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+.invoice-table th {
+  background: #f8fafc;
+  border-top: 1px solid #cbd5e1;
+  border-bottom: 2px solid #0f172a;
+  padding: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.invoice-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #cbd5e1;
+  font-size: 12.5px;
+}
+
+.invoice-table .total-row td {
+  border-top: 2px solid #0f172a;
+  border-bottom: 2px double #0f172a;
+  background: #fafafa;
+}
+
+.invoice-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 40px;
+}
+
+.invoice-footer .terms {
+  max-width: 60%;
+}
+
+.invoice-footer .terms p {
+  margin: 0 0 6px 0;
+}
+
+.invoice-footer .terms ul {
+  margin: 0;
+  padding-left: 14px;
+}
+
+.invoice-footer .terms li {
+  margin-bottom: 4px;
+}
+
+.invoice-footer .signatures {
+  text-align: center;
+}
+
+.invoice-footer .sig-line {
+  border-top: 1px solid #cbd5e1;
+  width: 160px;
+  padding-top: 6px;
+}
+
+/* Print Specific Rules */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  
+  .print-modal-overlay,
+  .print-modal-overlay * {
+    visibility: visible;
+  }
+  
+  .print-modal-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: transparent !important;
+    padding: 0;
+  }
+
+  .print-modal-box {
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .invoice-print-container {
+    border: none;
+    padding: 0;
+  }
+}

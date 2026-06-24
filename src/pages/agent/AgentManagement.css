@@ -1,0 +1,240 @@
+/* AgentManagement.css */
+
+.agent-mgmt-wrapper {
+  padding: 20px;
+  background: #f1f5fb;
+  min-height: calc(100vh - 60px);
+}
+
+/* ── IMPROVED: underline tab style ── */
+.agent-mgmt-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0;
+}
+
+.agent-tab-btn {
+  padding: 9px 20px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  border-radius: 0;
+  background: transparent;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+}
+
+.agent-tab-btn:hover {
+  color: #4361ee;
+  border-bottom-color: #a5b4fc;
+  background: transparent;
+}
+
+.agent-tab-btn.active {
+  color: #4361ee;
+  border-bottom: 2px solid #4361ee;
+  font-weight: 700;
+  background: transparent;
+}
+
+/* ── IMPROVED: card shadow ── */
+.agent-mgmt-content {
+  background: #fff;
+  border: 1px solid #e8eaf0;
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(67,97,238,0.06);
+}
+
+/* Shared form styles */
+.agent-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 24px;
+}
+
+.agent-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.agent-form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* ── IMPROVED: inputs match HR style ── */
+.agent-form-group input,
+.agent-form-group select,
+.agent-form-group textarea {
+  padding: 9px 12px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #1e293b;
+  background: #fafbff;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+}
+
+.agent-form-group input:hover,
+.agent-form-group select:hover,
+.agent-form-group textarea:hover {
+  border-color: #a5b4fc;
+}
+
+.agent-form-group input:focus,
+.agent-form-group select:focus,
+.agent-form-group textarea:focus {
+  border-color: #4361ee;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.12);
+}
+
+.agent-form-group textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+/* ── IMPROVED: section title — no ALL CAPS ── */
+.agent-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4361ee;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  margin: 20px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #eef0fd;
+}
+
+.agent-btn-primary {
+  padding: 9px 24px;
+  background: #4361ee;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 20px;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+  transition: background 0.18s, box-shadow 0.18s, transform 0.1s;
+  box-shadow: 0 2px 8px rgba(67,97,238,0.25);
+}
+
+.agent-btn-primary:hover {
+  background: #3a0ca3;
+  box-shadow: 0 4px 14px rgba(67,97,238,0.35);
+}
+.agent-btn-primary:active { transform: scale(0.98); }
+
+.agent-btn-secondary {
+  padding: 9px 24px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 20px;
+  margin-left: 10px;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+  transition: all 0.18s;
+}
+.agent-btn-secondary:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+}
+
+/* ── IMPROVED: table with blue-tinted header ── */
+.agent-table-wrapper {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(67,97,238,0.06);
+}
+
+.agent-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.agent-table thead tr {
+  background: #eef0fd;
+}
+
+.agent-table thead th {
+  padding: 11px 14px;
+  text-align: left;
+  font-weight: 700;
+  color: #1e293b;
+  white-space: nowrap;
+  font-size: 13px;
+  border-bottom: 1px solid #c7d0ee;
+  letter-spacing: 0.02em;
+}
+
+.agent-table tbody tr:nth-child(even) {
+  background: #fafbff;
+}
+
+.agent-table tbody tr:hover {
+  background: #f0f3ff;
+}
+
+.agent-table tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #e8eaf0;
+  color: #374151;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.badge-active   { background: #dcfce7; color: #166534; }
+.badge-inactive { background: #fee2e2; color: #991b1b; }
+.badge-pending  { background: #fef9c3; color: #92400e; }
+.badge-paid     { background: #dcfce7; color: #166534; }
+.badge-expired  { background: #f3f4f6; color: #6b7280; }
+
+.agent-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.agent-page-header h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.module-tag {
+  font-size: 12.5px;
+  background: #fef3c7;
+  color: #92400e;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  border: 1px solid #fcd34d;
+}

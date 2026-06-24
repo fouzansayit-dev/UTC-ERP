@@ -1,0 +1,256 @@
+/* ══════════════════════════════════════════
+   STUDENT MODULE — shared styles
+══════════════════════════════════════════ */
+
+/* ── Filter / Search card ── */
+.stu-filter-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.stu-filter-header {
+  background: #1e293b;
+  color: #fff;
+  padding: 13px 18px;
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+}
+.stu-filter-body {
+  padding: 20px 24px;
+}
+.stu-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  align-items: flex-end;
+  margin-bottom: 16px;
+}
+.stu-filter-row:last-child { margin-bottom: 0; }
+.stu-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 200px;
+  min-width: 160px;
+}
+.stu-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+}
+.stu-field input,
+.stu-field select,
+.stu-field textarea {
+  padding: 9px 11px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 7px;
+  font-size: 13.5px;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+  color: #1e293b;
+  outline: none;
+  transition: border 0.18s, box-shadow 0.18s;
+  background: #fafbff;
+  line-height: 1.5;
+}
+.stu-field input::placeholder { color: #94a3b8; }
+.stu-field input:focus,
+.stu-field select:focus,
+.stu-field textarea:focus {
+  border-color: #4361ee;
+  box-shadow: 0 0 0 3px rgba(67,97,238,0.1);
+  background: #fff;
+}
+.stu-field textarea { resize: vertical; min-height: 80px; }
+
+/* ── Section banner ── */
+.stu-section-banner {
+  background: #1e6fa8;
+  color: #fff;
+  padding: 10px 15px;
+  font-size: 13.5px;
+  font-weight: 700;
+  border-radius: 5px;
+  margin: 20px 0 12px;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+}
+
+/* ── Buttons ── */
+.stu-btn {
+  padding: 9px 22px;
+  border: none;
+  border-radius: 7px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+  letter-spacing: 0.01em;
+}
+.stu-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+.stu-btn:active { transform: translateY(0); }
+.stu-btn-primary   { background: #4361ee; color: #fff; }
+.stu-btn-secondary { background: #6b7280; color: #fff; }
+.stu-btn-success   { background: #16a34a; color: #fff; }
+.stu-btn-danger    { background: #dc2626; color: #fff; }
+.stu-btn-sm { padding: 5px 13px; font-size: 12.5px; }
+
+.stu-btn-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 16px 0 4px;
+  flex-wrap: wrap;
+}
+
+/* ── Table ── */
+.stu-table-wrap {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.stu-table-title {
+  background: #1e293b;
+  color: #fff;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+}
+.stu-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+}
+.stu-table thead th {
+  background: #f1f5f9;
+  padding: 11px 13px;
+  text-align: left;
+  font-weight: 700;
+  color: #1e293b;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+  font-size: 13px;
+}
+.stu-table tbody tr { border-bottom: 1px solid #f3f4f6; transition: background 0.12s; }
+.stu-table tbody tr:hover { background: #f8fafc; }
+.stu-table tbody td { padding: 10px 13px; color: #374151; line-height: 1.5; }
+.stu-table tbody tr:last-child { border-bottom: none; }
+
+/* ── Badge / status ── */
+.stu-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+}
+.stu-badge-green  { background: #dcfce7; color: #15803d; }
+.stu-badge-red    { background: #fee2e2; color: #b91c1c; }
+.stu-badge-blue   { background: #eef0fd; color: #3a0ca3; }
+.stu-badge-gray   { background: #f3f4f6; color: #6b7280; }
+.stu-badge-orange { background: #ffedd5; color: #c2410c; }
+
+/* ── Form grid ── */
+.stu-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px 24px;
+}
+.stu-form-col-2 { grid-column: span 2; }
+
+/* ── Abroad block ── */
+.stu-abroad-block {
+  background: #eef0fd;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 18px 20px;
+  margin-top: 18px;
+}
+.stu-abroad-block .stu-section-banner {
+  background: #3a0ca3;
+  margin-top: 0;
+}
+
+/* ── Checkbox row ── */
+.stu-check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  color: #374151;
+  cursor: pointer;
+  padding: 6px 0;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+}
+.stu-check-row input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; }
+
+/* ── Empty state ── */
+.stu-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* ── Attendance grid ── */
+.att-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.att-cell {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 8px 6px;
+  text-align: center;
+  font-size: 12.5px;
+}
+.att-cell .att-date { font-weight: 700; color: #1e293b; }
+.att-cell select { font-size: 12px; margin-top: 4px; width: 100%; border: 1px solid #d1d5db; border-radius: 4px; padding: 2px 4px; }
+
+/* ── Tabs ── */
+.stu-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.stu-tab {
+  padding: 10px 18px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s;
+  font-family: 'Nunito Sans', 'Inter', sans-serif;
+}
+.stu-tab:hover { color: #4361ee; }
+.stu-tab.active { color: #4361ee; border-bottom-color: #4361ee; font-weight: 700; }
+
+/* ── Subsection ── */
+.stu-subsection { margin-top: 14px; }
+.stu-subsection-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #3a0ca3;
+  margin-bottom: 10px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #bfdbfe;
+}

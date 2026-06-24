@@ -1,0 +1,477 @@
+openapi: 3.1.0
+info:
+  title: UCT ERP Secured API Portal
+  description: |
+    Production-grade, enterprise-ready API endpoints for Universidade Católica Timorense (UCT) ERP.
+    
+    ## Authentication
+    All endpoints (except `/api/auth/login`) require authentication via JWT Bearer Token.
+    Provide the token in the headers as:
+    `Authorization: Bearer <JWT_TOKEN>`
+
+    ## Role-Based Access Control (RBAC)
+    Operations and visibility are restricted by portal role:
+    - **Administrator**: Unrestricted read/write/delete access.
+    - **Student**: Access restricted to own student details, attendance, and fee transactions.
+    - **Staff/Faculty**: Access to manage students (read/write) and mark attendance.
+    - **HR**: Access to manage employee records and payroll.
+    - **Accounts**: Access to manage transactions, ledgers, and fee structures.
+    - **Transport**: Access to manage transport routes, vehicles, and allocations.
+  version: 2.0.0
+
+servers:
+  - url: http://localhost:5000
+    description: Local Express Backend Server
+
+paths:
+  /api/auth/login:
+    post:
+      summary: User Portal Sign In
+      description: Validates user credentials and portal role selection, returning a signed JWT token.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+                - role
+              properties:
+                username:
+                  type: string
+                  description: Login username or email address
+                  example: admin
+                password:
+                  type: string
+                  description: Account password
+                  example: Admin@UctErp2026
+                role:
+                  type: string
+                  enum: [Administrator, Student, Staff/Faculty, HR, Accounts, Transport, Agent]
+                  description: Chosen portal login role
+                  example: Administrator
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  token:
+                    type: string
+                    description: JWT Bearer authorization token
+                  user:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                      role:
+                        type: string
+        '400':
+          description: Missing required fields
+        '401':
+          description: Invalid credentials or incorrect portal role
+
+  /api/auth/change-password:
+    post:
+      summary: Change Account Password
+      description: Updates the logged-in user's password hash.
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - currentPassword
+                - newPassword
+              properties:
+                username:
+                  type: string
+                currentPassword:
+                  type: string
+                newPassword:
+                  type: string
+      responses:
+        '200':
+          description: Password updated successfully
+        '401':
+          description: Incorrect current password
+        '404':
+          description: User not found
+
+  /api/students:
+    get:
+      summary: Get Student Records
+      description: |
+        Returns student records.
+        - **Student role**: Returns only the student's own record matching their logged-in scholar number.
+        - **Staff/Faculty, Administrator**: Returns all student records.
+        - **Other roles**: Returns 403 Forbidden.
+      tags:
+        - Student Module
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Paginated student details list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+        '403':
+          description: Insufficient permissions
+
+    post:
+      summary: Create New Student Record
+      description: Adds a new student to the database (Restricted to Administrator and Staff/Faculty).
+      tags:
+        - Student Module
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '201':
+          description: Student created successfully
+        '400':
+          description: Validation error or unique constraints violated (Scholar No already exists)
+        '403':
+          description: Insufficient permissions
+
+  /api/students/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          description: Database record ID
+    put:
+      summary: Update Student Record
+      description: Modifies student details (Restricted to Administrator and Staff/Faculty).
+      tags:
+        - Student Module
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Student'
+      responses:
+        '200':
+          description: Student updated successfully
+        '403':
+          description: Insufficient permissions
+        '404':
+          description: Student record not found
+
+    delete:
+      summary: Delete Student Record
+      description: Permanently deletes a student record (Restricted to Administrator only).
+      tags:
+        - Student Module
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Student deleted successfully
+        '403':
+          description: Insufficient permissions (Non-admin)
+
+  /api/hr:
+    get:
+      summary: Get Employee Records
+      description: |
+        Returns employee details.
+        - **Staff/Faculty role**: Returns only their own employee profile (matching their logged-in email).
+        - **HR, Administrator**: Returns all employee files.
+        - **Other roles**: Returns 403 Forbidden.
+      tags:
+        - HR & Payroll
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Array of employee details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+        '403':
+          description: Insufficient permissions
+
+    post:
+      summary: Add New Employee File
+      description: Creates a new employee file in the database (Restricted to Administrator and HR).
+      tags:
+        - HR & Payroll
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Employee'
+      responses:
+        '201':
+          description: Employee created successfully
+        '403':
+          description: Insufficient permissions
+
+  /api/hr/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    put:
+      summary: Update Employee Details
+      description: |
+        Updates employee records.
+        - **HR, Administrator**: Can edit any employee record.
+        - **Staff/Faculty**: Can only update their own employee record matching their logged-in email.
+        - **Other roles**: Returns 403 Forbidden.
+      tags:
+        - HR & Payroll
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Employee'
+      responses:
+        '200':
+          description: Employee updated successfully
+        '403':
+          description: Insufficient permissions (Self-update violation or invalid role)
+
+    delete:
+      summary: Remove Employee File
+      description: Permanently deletes an employee record (Restricted to Administrator only).
+      tags:
+        - HR & Payroll
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Employee record deleted successfully
+        '403':
+          description: Insufficient permissions
+
+  /api/fees:
+    get:
+      summary: Get Fee Transactions
+      description: |
+        Lists receipts/ledger transactions.
+        - **Student role**: Returns only fee receipts matching their own student ID.
+        - **Accounts, Administrator**: Returns all fee receipts.
+        - **Other roles**: Returns 403 Forbidden.
+      tags:
+        - Accounts & Fees
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of receipts
+        '403':
+          description: Insufficient permissions
+
+    post:
+      summary: Collect Fee / Create Receipt
+      description: Registers a new payment transaction and decreases the student's due fee balance (Restricted to Administrator and Accounts).
+      tags:
+        - Accounts & Fees
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - student_id
+                - amount
+                - payment_mode
+              properties:
+                student_id:
+                  type: integer
+                amount:
+                  type: number
+                payment_mode:
+                  type: string
+                date:
+                  type: string
+                head_wise_details:
+                  type: object
+      responses:
+        '201':
+          description: Transaction created and balance adjusted successfully
+        '403':
+          description: Insufficient permissions
+
+  /api/generic/{module_key}/{record_id}:
+    parameters:
+      - name: module_key
+        in: path
+        required: true
+        schema:
+          type: string
+          description: Target module key (e.g. transport, hostel, student-attendance)
+      - name: record_id
+        in: path
+        required: true
+        schema:
+          type: string
+          description: Document record ID (e.g. routes, allocations, records)
+    get:
+      summary: Get Generic Module Config/Record
+      description: |
+        Fetches JSON record for secondary modules under role rules:
+        - **Transport role**: Allowed to read/write `transport` key.
+        - **Accounts role**: Allowed to read/write `accounts` and `fees` keys.
+        - **Staff/Faculty role**: Allowed to read/write `student-attendance`, `timetable`, `lesson-plan` keys, and read `hostel`, `transport` keys.
+        - **Student role**: Allowed to read keys `hostel` (filtered to their details), `student-attendance` (filtered to their attendance), `timetable`, `lesson-plan`, `certificate`, `document`.
+      tags:
+        - Secondary Modules
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: JSON object or array stored under requested key
+        '403':
+          description: Insufficient permissions
+
+    post:
+      summary: Save Generic Module Config/Record
+      description: Overwrites or updates a generic key-value JSON entry (Restricted by module key write-rules).
+      tags:
+        - Secondary Modules
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Entry saved/upserted successfully
+        '403':
+          description: Insufficient permissions
+
+  /api/dashboard-summary:
+    get:
+      summary: Get Live Dashboard Counter Totals
+      description: Returns aggregated KPIs and metrics for charts and lists (Requires authentication).
+      tags:
+        - General Operations
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: JSON payload containing KPI counters and chart arrays
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Standard Authorization Bearer token header.
+
+  schemas:
+    Student:
+      type: object
+      required:
+        - scholar_no
+        - name
+        - course
+        - branch
+        - batch
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        scholar_no:
+          type: string
+        enroll_no:
+          type: string
+        roll_no:
+          type: string
+        name:
+          type: string
+        course:
+          type: string
+        branch:
+          type: string
+        batch:
+          type: string
+        category:
+          type: string
+        admission_date:
+          type: string
+        status:
+          type: string
+        due_fee:
+          type: number
+        json_details:
+          type: string
+          description: Stringified JSON containing custom form fields
+
+    Employee:
+      type: object
+      required:
+        - name
+        - department
+        - salary
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+        department:
+          type: string
+        salary:
+          type: number
+        pay_status:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        attendance_status:
+          type: string
+        json_details:
+          type: string

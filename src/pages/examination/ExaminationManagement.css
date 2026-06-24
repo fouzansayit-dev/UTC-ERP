@@ -1,0 +1,246 @@
+/* ── EXAMINATION MODULE STYLES ── */
+/* All classes prefixed with exam- to avoid conflicts with existing ERP styles */
+
+.exam-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1100px;
+}
+
+/* ── CARD ── */
+.exam-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 20px 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.exam-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── FORM GRID ── */
+.exam-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px 20px;
+}
+
+.exam-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.exam-field label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.exam-field input,
+.exam-field select,
+.exam-field textarea {
+  padding: 7px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #111827;
+  background: #fff;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+
+.exam-field input:focus,
+.exam-field select:focus,
+.exam-field textarea:focus {
+  border-color: #6366f1;
+}
+
+.exam-field input[type="file"] {
+  padding: 5px;
+  font-size: 12px;
+}
+
+.exam-field textarea {
+  resize: vertical;
+}
+
+.req {
+  color: #dc2626;
+}
+
+.exam-error {
+  font-size: 11px;
+  color: #dc2626;
+  margin-top: 2px;
+}
+
+.exam-hint {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ── ACTIONS ── */
+.exam-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-self: flex-end;
+}
+
+/* ── BUTTONS ── */
+.exam-btn {
+  padding: 7px 18px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+  white-space: nowrap;
+}
+
+.exam-btn.primary {
+  background: #6366f1;
+  color: #fff;
+  border-color: #6366f1;
+}
+.exam-btn.primary:hover { background: #4f46e5; }
+.exam-btn.primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.exam-btn.secondary {
+  background: #fff;
+  color: #374151;
+  border-color: #d1d5db;
+}
+.exam-btn.secondary:hover { background: #f9fafb; }
+
+/* ── ALERTS ── */
+.exam-alert {
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-bottom: 14px;
+  border: 1px solid;
+}
+.exam-alert.success { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+.exam-alert.error   { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+.exam-alert.info    { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+
+/* ── TABLE ── */
+.exam-table-wrap { overflow-x: auto; }
+
+.exam-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.exam-table th {
+  background: #1e1b4b;
+  color: #e0e7ff;
+  text-align: left;
+  padding: 9px 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.exam-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f3f4f6;
+  color: #111827;
+  vertical-align: middle;
+}
+
+.exam-table tbody tr:nth-child(even) { background: #fafafa; }
+.exam-table tbody tr:hover { background: #f5f3ff; }
+
+.exam-no-data {
+  text-align: center;
+  color: #9ca3af;
+  padding: 24px !important;
+  font-style: italic;
+}
+
+/* ── MARK INPUT ── */
+.exam-mark-input {
+  width: 72px !important;
+  text-align: center;
+  padding: 4px 6px !important;
+}
+
+/* ── BADGES ── */
+.exam-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.exam-badge.pass { background: #dcfce7; color: #166534; }
+.exam-badge.fail { background: #fee2e2; color: #991b1b; }
+.exam-badge.info { background: #dbeafe; color: #1e40af; }
+
+.exam-new-badge {
+  font-size: 10px;
+  background: #6366f1;
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+/* ── UTILITIES ── */
+.exam-row-flex {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.exam-meta {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* ── SUMMARY GRID ── */
+.exam-summary-grid {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.exam-summary-box {
+  background: #f5f3ff;
+  border: 1px solid #e0e7ff;
+  border-radius: 6px;
+  padding: 14px 20px;
+  min-width: 120px;
+  text-align: center;
+}
+
+.exam-summary-label {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.exam-summary-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #6366f1;
+}
