@@ -269,7 +269,7 @@ const ROLE_MODULES = {
 const ALLOWED_SUBS = {
   'Student': {
     'dashboard': ['dash-circular', 'dash-assign'],
-    'student': ['stu-edit', 'stu-leave', 'stu-attendance'],
+    'student': ['stu-leave', 'stu-attendance'],
     'fee-management': ['fmgmt-ledger'],
   },
   'Staff/Faculty': {
@@ -284,6 +284,70 @@ export default function App() {
   const [sbOpen,    setSbOpen]    = useState(false);
   const [customAlert, setCustomAlert] = useState({ show: false, message: '' });
   const [tourActive, setTourActive] = useState(false);
+
+  const [changePwdOpen, setChangePwdOpen] = useState(false);
+  const [currentPwd, setCurrentPwd]       = useState('');
+  const [newPwd, setNewPwd]               = useState('');
+  const [confirmPwd, setConfirmPwd]       = useState('');
+  const [pwdError, setPwdError]           = useState('');
+  const [pwdSuccess, setPwdSuccess]       = useState('');
+  const [pwdLoading, setPwdLoading]       = useState(false);
+
+  const closeChangePwdModal = () => {
+    setChangePwdOpen(false);
+    setCurrentPwd('');
+    setNewPwd('');
+    setConfirmPwd('');
+    setPwdError('');
+    setPwdSuccess('');
+    setPwdLoading(false);
+  };
+
+  const handleChangePassword = (e) => {
+    e.preventDefault();
+    setPwdError('');
+    setPwdSuccess('');
+
+    if (newPwd !== confirmPwd) {
+      setPwdError('New passwords do not match.');
+      return;
+    }
+    if (newPwd.length < 6) {
+      setPwdError('Password must be at least 6 characters long.');
+      return;
+    }
+
+    setPwdLoading(true);
+    fetch('/api/auth/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: user?.username,
+        currentPassword: currentPwd,
+        newPassword: newPwd
+      })
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        setPwdLoading(false);
+        if (!res.ok) {
+          setPwdError(data.error || 'Failed to change password.');
+        } else {
+          setPwdSuccess('Password changed successfully! You will be signed out shortly.');
+          setTimeout(() => {
+            closeChangePwdModal();
+            sessionStorage.removeItem('uct_user');
+            sessionStorage.removeItem('uct_token');
+            setIsLoggedIn(false);
+            setUser(null);
+          }, 2000);
+        }
+      })
+      .catch((err) => {
+        setPwdLoading(false);
+        setPwdError('Server connection error. Please try again.');
+      });
+  };
 
   // Compute filtered modules for this user role
   const userRole = user?.role || 'Student';
@@ -891,8 +955,19 @@ export default function App() {
               </span>
             </div>
             <div className={'user-dd' + (userOpen ? ' open' : '')}>
-              <div className="dd-item" onClick={() => setUserOpen(false)}>My Profile</div>
-              <div className="dd-item" onClick={() => setUserOpen(false)}>Change Password</div>
+              <div className="dd-item" onClick={() => {
+                setUserOpen(false);
+                if (user?.role === 'Student') {
+                  setActiveMod('student');
+                  setActiveSub('stu-edit');
+                  setPageTitle('My Profile');
+                } else {
+                  setActiveMod('hr');
+                  setActiveSub('hr-view');
+                  setPageTitle('View Employees');
+                }
+              }}>My Profile</div>
+              <div className="dd-item" onClick={() => { setChangePwdOpen(true); setUserOpen(false); }}>Change Password</div>
               <div className="dd-item" onClick={() => setUserOpen(false)}>Preferences</div>
               <div className="dd-item" onClick={() => setUserOpen(false)}>Activity Log</div>
               <div className="dd-item" onClick={() => { sessionStorage.removeItem('uct_user'); sessionStorage.removeItem('uct_token'); setIsLoggedIn(false); setUser(null); setUserOpen(false); }}>Sign Out</div>
@@ -1049,6 +1124,127 @@ export default function App() {
             >
               OK
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── CHANGE PASSWORD MODAL ── */}
+      {changePwdOpen && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(15, 23, 42, 0.65)',
+          backdropFilter: 'blur(5px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 999999
+        }}>
+          <div style={{
+            background: '#ffffff',
+            borderRadius: '16px',
+            padding: '28px 32px',
+            width: '400px',
+            maxWidth: '92%',
+            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+            border: '1px solid #e2e8f0',
+            borderTop: '5px solid #0d5ef4',
+            position: 'relative'
+          }}>
+            <h3 style={{
+              fontSize: '18px',
+              fontWeight: 800,
+              color: '#0f172a',
+              marginBottom: '16px',
+              textAlign: 'center'
+            }}>🔐 Change Password</h3>
+            
+            {pwdError && (
+              <div style={{
+                background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626',
+                borderRadius: '8px', padding: '10px 14px', marginBottom: '14px', fontSize: '13px'
+              }}>
+                ⚠ {pwdError}
+              </div>
+            )}
+            
+            {pwdSuccess && (
+              <div style={{
+                background: '#f0fdf4', border: '1px solid #bbf7d0', color: '#16a34a',
+                borderRadius: '8px', padding: '10px 14px', marginBottom: '14px', fontSize: '13px'
+              }}>
+                ✓ {pwdSuccess}
+              </div>
+            )}
+
+            <form onSubmit={handleChangePassword}>
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: '#475569', marginBottom: '6px', textTransform: 'uppercase' }}>Current Password</label>
+                <input 
+                  type="password" 
+                  value={currentPwd}
+                  onChange={(e) => setCurrentPwd(e.target.value)}
+                  required
+                  style={{
+                    width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '8px',
+                    fontSize: '14px', outline: 'none'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: '#475569', marginBottom: '6px', textTransform: 'uppercase' }}>New Password</label>
+                <input 
+                  type="password" 
+                  value={newPwd}
+                  onChange={(e) => setNewPwd(e.target.value)}
+                  required
+                  style={{
+                    width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '8px',
+                    fontSize: '14px', outline: 'none'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: '#475569', marginBottom: '6px', textTransform: 'uppercase' }}>Confirm New Password</label>
+                <input 
+                  type="password" 
+                  value={confirmPwd}
+                  onChange={(e) => setConfirmPwd(e.target.value)}
+                  required
+                  style={{
+                    width: '100%', padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: '8px',
+                    fontSize: '14px', outline: 'none'
+                  }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                <button 
+                  type="button"
+                  onClick={closeChangePwdModal}
+                  disabled={pwdLoading}
+                  style={{
+                    background: '#f1f5f9', color: '#475569', border: 'none', borderRadius: '8px',
+                    padding: '10px 20px', fontSize: '14px', fontWeight: 600, cursor: 'pointer'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  disabled={pwdLoading}
+                  style={{
+                    background: '#0d5ef4', color: '#ffffff', border: 'none', borderRadius: '8px',
+                    padding: '10px 20px', fontSize: '14px', fontWeight: 700, cursor: 'pointer',
+                    opacity: pwdLoading ? 0.6 : 1
+                  }}
+                >
+                  {pwdLoading ? 'Updating...' : 'Update Password'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
