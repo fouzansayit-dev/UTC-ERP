@@ -1,10 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { COLLEGE, TODAY, iS, lbS, rS, TableToolbar, EmptyRow } from './accountsConfig.jsx';
 
 export default function BillEntryDetails() {
   const [filter, setFilter] = useState({ college:'All', start:TODAY, end:TODAY });
   const [shown,  setShown]  = useState(false);
+  const [rows, setRows] = useState([]);
   const sf = k => e => setFilter(p => ({ ...p, [k]: e.target.value }));
+
+  const loadData = () => {
+    fetch('/api/generic/accounts/bills')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          const filtered = data.filter(r => r.billDate >= filter.start && r.billDate <= filter.end);
+          setRows(filtered);
+        }
+      })
+      .catch(err => console.error('Error loading bills:', err));
+  };
+
+  useEffect(() => {
+    if (shown) {
+      loadData();
+    }
+  }, [shown, filter.start, filter.end]);
 
   return (
     <div className="hr-form">
@@ -17,12 +36,27 @@ export default function BillEntryDetails() {
       </div>
       {shown && (
         <div className="table-wrap">
-          <TableToolbar />
+          <TableToolbar title="UCT ERP Bill Entry Details" />
           <table className="hr-table">
-            <thead><tr><th>SNo.</th><th>Date</th><th>Party</th><th>Head</th><th>Subhead</th><th>Bill No</th><th>Net Amount</th><th>Remarks</th></tr></thead>
-            <tbody><EmptyRow cols={8} /></tbody>
+            <thead>
+              <tr><th>SNo.</th><th>Date</th><th>Party</th><th>Head</th><th>Subhead</th><th>Bill No</th><th>Net Amount</th><th>Remarks</th></tr>
+            </thead>
+            <tbody>
+              {rows.length === 0 ? <EmptyRow cols={8} /> : rows.map((r, i) => (
+                <tr key={r.id}>
+                  <td>{i+1}</td>
+                  <td>{r.billDate}</td>
+                  <td>{r.party || '-'}</td>
+                  <td>{r.head}</td>
+                  <td>{r.subhead || '-'}</td>
+                  <td>{r.billNo}</td>
+                  <td>₹{parseFloat(r.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                  <td>{r.remarks || '-'}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
-          <div style={{ fontSize:13, color:'#666', marginTop:6 }}>Showing 0 entries — connect backend API to load data</div>
+          <div style={{ fontSize:13, color:'#666', marginTop:6 }}>Showing {rows.length} entries</div>
         </div>
       )}
     </div>

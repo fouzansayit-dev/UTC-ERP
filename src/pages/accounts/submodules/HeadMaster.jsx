@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { iS, lbS, rS, SecHead, TableToolbar, EmptyRow } from './accountsConfig.jsx';
 
 const DEFAULT_HEADS = [
@@ -13,19 +13,52 @@ const DEFAULT_HEADS = [
 
 export default function HeadMaster() {
   const [form,   setForm]   = useState({ head:'' });
-  const [rows,   setRows]   = useState(DEFAULT_HEADS);
+  const [rows,   setRows]   = useState([]);
   const [search, setSearch] = useState('');
   const [editId, setEditId] = useState(null);
 
+  const loadData = () => {
+    fetch('/api/generic/accounts/heads')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setRows(data);
+        } else {
+          setRows(DEFAULT_HEADS);
+        }
+      })
+      .catch(err => {
+        console.error('Error loading heads:', err);
+        setRows(DEFAULT_HEADS);
+      });
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
   const handleSubmit = () => {
     if (!form.head.trim()) { alert('Head name is required.'); return; }
+    let updated;
     if (editId) {
-      setRows(p => p.map(r => r.id === editId ? { ...r, head: form.head } : r));
+      updated = rows.map(r => r.id === editId ? { ...r, head: form.head } : r);
       setEditId(null);
     } else {
-      setRows(p => [...p, { id: Date.now(), head: form.head, status:'Active' }]);
+      updated = [...rows, { id: Date.now(), head: form.head, status:'Active' }];
     }
-    setForm({ head:'' });
+
+    fetch('/api/generic/accounts/heads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated)
+    })
+      .then(res => res.json())
+      .then(() => {
+        setRows(updated);
+        setForm({ head:'' });
+        alert('Head saved successfully.');
+      })
+      .catch(err => alert('Failed to save head: ' + err.message));
   };
 
   const filtered = rows.filter(r => r.head.toLowerCase().includes(search.toLowerCase()));

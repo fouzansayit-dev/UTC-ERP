@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { COLLEGE, iS, lbS, rS, SecHead, TableToolbar, EmptyRow } from './accountsConfig.jsx';
 
 export default function BankMaster() {
@@ -7,10 +7,36 @@ export default function BankMaster() {
   const [search, setSearch] = useState('');
   const set = k => e => setForm(p => ({ ...p, [k]: e.target.value }));
 
+  const loadData = () => {
+    fetch('/api/generic/accounts/banks')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setRows(data);
+      })
+      .catch(err => console.error('Error loading banks:', err));
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
   const handleSubmit = () => {
     if (!form.holder || !form.bank) { alert('Account Holder Name and Bank Name are required.'); return; }
-    setRows(p => [...p, { id: Date.now(), ...form, status:'Active', closing: form.opening || 0 }]);
-    setForm({ holder:'', bank:'', accNo:'', opening:'', payMode:'None selected' });
+    const entry = { id: Date.now(), ...form, status:'Active', closing: form.opening || 0 };
+    const updated = [...rows, entry];
+
+    fetch('/api/generic/accounts/banks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated)
+    })
+      .then(res => res.json())
+      .then(() => {
+        setRows(updated);
+        setForm({ holder:'', bank:'', accNo:'', opening:'', payMode:'None selected' });
+        alert('Bank saved successfully.');
+      })
+      .catch(err => alert('Failed to save bank: ' + err.message));
   };
 
   const filtered = rows.filter(r =>

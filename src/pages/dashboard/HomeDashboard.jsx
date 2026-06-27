@@ -900,6 +900,36 @@ function StudentDashboardView({ user, navigateTo }) {
         </div>
       </div>
 
+      {/* ── DYNAMIC AUTOMATED ALERT WARNINGS ── */}
+      {((attendancePct < 75 && totalClasses > 0) || dueFee > 0) && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
+          {attendancePct < 75 && totalClasses > 0 && (
+            <div style={{
+              background: '#fff7ed', border: '1px solid #ffedd5', color: '#c2410c',
+              padding: '14px 20px', borderRadius: 8, fontSize: '13.5px', display: 'flex',
+              alignItems: 'center', gap: 12, boxShadow: '0 2px 4px rgba(249, 115, 22, 0.05)'
+            }}>
+              <span style={{ fontSize: 20 }}>⚠️</span>
+              <div>
+                <strong>Attendance Warning:</strong> Your cumulative class presence is currently <strong>{attendancePct}%</strong>, which falls below the mandatory <strong>75%</strong> requirement. Please attend upcoming lectures to avoid exam eligibility restrictions.
+              </div>
+            </div>
+          )}
+          {dueFee > 0 && (
+            <div style={{
+              background: '#fef2f2', border: '1px solid #fee2e2', color: '#b91c1c',
+              padding: '14px 20px', borderRadius: 8, fontSize: '13.5px', display: 'flex',
+              alignItems: 'center', gap: 12, boxShadow: '0 2px 4px rgba(220, 38, 38, 0.05)'
+            }}>
+              <span style={{ fontSize: 20 }}>💵</span>
+              <div>
+                <strong>Outstanding Fees Alert:</strong> You have an outstanding tuition balance of <strong>$ {dueFee.toLocaleString()}</strong>. Please make payment at the accounts office or download your pending bills.
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 24, marginBottom: 28 }}>
         <div style={{
           background: '#fff',

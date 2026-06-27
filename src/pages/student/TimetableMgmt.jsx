@@ -215,6 +215,28 @@ function TimetableAllocation() {
     const n = { ...t }; delete n[cellKey(day, period)]; return n;
   });
 
+  const handleAutoGenerate = () => {
+    const pool = [
+      { subject: 'Anatomy', faculty: 'Dr. Domingos' },
+      { subject: 'Physiology', faculty: 'Dr. Carlos' },
+      { subject: 'Biochemistry', faculty: 'Dr. Ana Paula' },
+      { subject: 'Pathology', faculty: 'Dr. Juan Silva' },
+      { subject: 'Microbiology', faculty: 'Dr. Carlos Pinto' }
+    ];
+
+    const generated = {};
+    const periods = ["p1", "p2", "p3", "p4"];
+
+    DAYS.forEach((day, dayIdx) => {
+      periods.forEach((period, periodIdx) => {
+        const poolIndex = (dayIdx + periodIdx) % pool.length;
+        generated[`${day}_${period}`] = pool[poolIndex];
+      });
+    });
+
+    setTimetable(generated);
+  };
+
   const fields = [
     { name: "college", label: "College",               type: "select", options: COLLEGES },
     { name: "session", label: "Session",               type: "select", options: ["Select", ...SESSIONS] },
@@ -267,30 +289,33 @@ function TimetableAllocation() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td style={{ ...S.td, fontWeight: "bold", background: "#ecf0f1" }}>Subject/Teacher</td>
-                    {DAYS.map(day => {
-                      const cell = getCell(day, "p1");
-                      return (
-                        <td key={day} style={{ ...S.td, padding: "6px" }}>
-                          {cell
-                            ? <div style={S.timeCell} onClick={() => setModal({ day, period: "p1" })}>
-                                <span style={{ fontWeight: "bold", color: "#1565c0", fontSize: "12px" }}>{cell.subject}</span>
-                                <span style={{ color: "#555", fontSize: "11px" }}>{cell.faculty}</span>
-                                <span style={{ color: "#c62828", fontSize: "10px", marginTop: "2px", cursor: "pointer" }}
-                                  onClick={e => { e.stopPropagation(); clearCell(day, "p1"); }}>✕ Remove</span>
-                              </div>
-                            : <button style={S.emptyCellBtn} onClick={() => setModal({ day, period: "p1" })}>+ Assign</button>
-                          }
-                        </td>
-                      );
-                    })}
-                  </tr>
+                  {["p1", "p2", "p3", "p4"].map((pKey, pIdx) => (
+                    <tr key={pKey}>
+                      <td style={{ ...S.td, fontWeight: "bold", background: "#ecf0f1" }}>Period {pIdx + 1}</td>
+                      {DAYS.map(day => {
+                        const cell = getCell(day, pKey);
+                        return (
+                          <td key={day} style={{ ...S.td, padding: "6px" }}>
+                            {cell
+                              ? <div style={S.timeCell} onClick={() => setModal({ day, period: pKey })}>
+                                  <span style={{ fontWeight: "bold", color: "#1565c0", fontSize: "12px" }}>{cell.subject}</span>
+                                  <span style={{ color: "#555", fontSize: "11px" }}>{cell.faculty}</span>
+                                  <span style={{ color: "#c62828", fontSize: "10px", marginTop: "2px", cursor: "pointer" }}
+                                    onClick={e => { e.stopPropagation(); clearCell(day, pKey); }}>✕ Remove</span>
+                                </div>
+                              : <button style={S.emptyCellBtn} onClick={() => setModal({ day, period: pKey })}>+ Assign</button>
+                            }
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
-            <div style={{ marginTop: "16px" }}>
+            <div style={{ marginTop: "16px", display: "flex", gap: "10px" }}>
               <button style={S.btnPrimary} onClick={() => alert("Timetable submitted.")}>Submit</button>
+              <button style={{ ...S.btnPrimary, background: "#10b981" }} onClick={handleAutoGenerate}>Auto-Generate Conflict-Free Schedule</button>
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { iS, lbS, rS, SecHead, TableToolbar, EmptyRow } from './accountsConfig.jsx';
 
 const PARTY_TYPES = ['Supplier','Vendor','Foreign University','Agent','Other'];
@@ -9,10 +9,36 @@ export default function PartyMaster() {
   const [search, setSearch] = useState('');
   const set = k => e => setForm(p => ({ ...p, [k]: e.target.value }));
 
+  const loadData = () => {
+    fetch('/api/generic/accounts/parties')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setRows(data);
+      })
+      .catch(err => console.error('Error loading parties:', err));
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
   const handleSubmit = () => {
     if (!form.name.trim()) { alert('Name is required.'); return; }
-    setRows(p => [...p, { id: Date.now(), ...form, status:'Active' }]);
-    setForm({ firm:'', name:'', mobile:'', address:'', type:'Supplier' });
+    const entry = { id: Date.now(), ...form, status:'Active' };
+    const updated = [...rows, entry];
+
+    fetch('/api/generic/accounts/parties', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated)
+    })
+      .then(res => res.json())
+      .then(() => {
+        setRows(updated);
+        setForm({ firm:'', name:'', mobile:'', address:'', type:'Supplier' });
+        alert('Party saved successfully.');
+      })
+      .catch(err => alert('Failed to save party: ' + err.message));
   };
 
   const filtered = rows.filter(r => (r.name + r.firm).toLowerCase().includes(search.toLowerCase()));

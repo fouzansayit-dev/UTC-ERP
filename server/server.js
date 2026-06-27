@@ -26,6 +26,7 @@ app.use('/api/generic',        authenticate, require('./routes/generic'));
 app.use('/api/abroad-masters', authenticate, require('./routes/abroad_masters'));
 app.use('/api/agents',         authenticate, require('./routes/agents'));
 app.use('/api/consultants',    authenticate, require('./routes/consultants'));
+app.use('/api/automations',    authenticate, require('./routes/automations'));
 
 // Mock sending emails to employees
 app.post('/api/hr/send-email', authenticate, (req, res) => {

@@ -1,18 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { iS, lbS, rS, SecHead, TableToolbar, EmptyRow } from './accountsConfig.jsx';
 
-const HEADS = ['Construction','Expenses','Salary','Unio Hostel','Agent Commission','Forex Remittance','Abroad University Fee'];
+const DEFAULT_HEADS = ['Construction','Expenses','Salary','Unio Hostel','Agent Commission','Forex Remittance','Abroad University Fee'];
 
 export default function SubheadMaster() {
   const [form,   setForm]   = useState({ head:'', subhead:'' });
   const [rows,   setRows]   = useState([]);
+  const [heads,  setHeads]  = useState([]);
   const [search, setSearch] = useState('');
   const set = k => e => setForm(p => ({ ...p, [k]: e.target.value }));
 
+  const loadData = () => {
+    // Load Heads
+    fetch('/api/generic/accounts/heads')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setHeads(data.map(h => h.head));
+        } else {
+          setHeads(DEFAULT_HEADS);
+        }
+      })
+      .catch(err => {
+        console.error('Error loading heads:', err);
+        setHeads(DEFAULT_HEADS);
+      });
+
+    // Load Subheads
+    fetch('/api/generic/accounts/subheads')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setRows(data);
+      })
+      .catch(err => console.error('Error loading subheads:', err));
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
   const handleSubmit = () => {
     if (!form.head || !form.subhead) { alert('Head and Sub Head Name are required.'); return; }
-    setRows(p => [...p, { id: Date.now(), ...form, status:'Active' }]);
-    setForm({ head:'', subhead:'' });
+    const entry = { id: Date.now(), ...form, status:'Active' };
+    const updated = [...rows, entry];
+
+    fetch('/api/generic/accounts/subheads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated)
+    })
+      .then(res => res.json())
+      .then(() => {
+        setRows(updated);
+        setForm({ head:'', subhead:'' });
+        alert('Subhead saved successfully.');
+      })
+      .catch(err => alert('Failed to save subhead: ' + err.message));
   };
 
   const filtered = rows.filter(r => r.subhead.toLowerCase().includes(search.toLowerCase()));
@@ -27,7 +70,7 @@ export default function SubheadMaster() {
             <div style={{ flex:1, maxWidth:340 }}>
               <select style={iS} value={form.head} onChange={set('head')}>
                 <option value="">Select</option>
-                {HEADS.map(h => <option key={h}>{h}</option>)}
+                {heads.map(h => <option key={h}>{h}</option>)}
               </select>
             </div>
           </div>

@@ -38,6 +38,10 @@ export default function FeeReceipt() {
     fetch('/api/fees')
       .then(res => res.json())
       .then(data => {
+        if (!Array.isArray(data)) {
+          setReceipts([]);
+          return;
+        }
         const mapped = data.map((r, i) => ({
           ...r,
           sno: i + 1,
@@ -61,7 +65,13 @@ export default function FeeReceipt() {
     loadReceipts();
     fetch('/api/students')
       .then(res => res.json())
-      .then(data => setAllStudents(data))
+      .then(data => {
+        if (Array.isArray(data)) {
+          setAllStudents(data);
+        } else {
+          setAllStudents([]);
+        }
+      })
       .catch(err => console.error('Error loading students:', err));
   }, []);
 

@@ -16,7 +16,7 @@ router.get('/:module_key/:record_id', (req, res) => {
       return ['hostel', 'student-attendance', 'timetable', 'lesson-plan', 'certificate', 'document'].includes(module_key);
     }
     if (role === 'Staff/Faculty') {
-      return ['hostel', 'student-attendance', 'timetable', 'lesson-plan', 'certificate', 'document', 'transport'].includes(module_key);
+      return ['hostel', 'student-attendance', 'timetable', 'lesson-plan', 'certificate', 'document'].includes(module_key);
     }
     if (role === 'Accounts') {
       return ['accounts', 'fees'].includes(module_key);

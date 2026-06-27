@@ -250,7 +250,7 @@ const ROLE_MODULES = {
   ],
   'Staff/Faculty': [
     'dashboard', 'student', 'student-attendance', 'timetable', 'lesson-plan',
-    'hostel', 'transport', 'abroad', 'visa', 'agent', 'examination', 'certificate', 'document'
+    'hostel', 'abroad', 'visa', 'agent', 'examination', 'certificate', 'document'
   ],
   'HR': [
     'dashboard', 'hr', 'student-attendance'
@@ -268,13 +268,25 @@ const ROLE_MODULES = {
 
 const ALLOWED_SUBS = {
   'Student': {
-    'dashboard': ['dash-circular', 'dash-assign'],
+    'dashboard': ['dash-circular'],
     'student': ['stu-leave', 'stu-attendance'],
     'fee-management': ['fmgmt-ledger'],
   },
   'Staff/Faculty': {
     'dashboard': ['dash-circular', 'dash-assign', 'dash-birthday', 'dash-rfid', 'dash-enquiry'],
     'student': ['stu-add', 'stu-edit', 'stu-search', 'stu-attendance', 'stu-leave', 'stu-reports'],
+  },
+  'HR': {
+    'dashboard': ['dash-circular', 'dash-birthday', 'dash-rfid', 'dash-enquiry']
+  },
+  'Accounts': {
+    'dashboard': ['dash-circular', 'dash-account', 'dash-birthday', 'dash-rfid', 'dash-enquiry']
+  },
+  'Transport': {
+    'dashboard': ['dash-circular', 'dash-birthday', 'dash-rfid', 'dash-enquiry']
+  },
+  'Agent': {
+    'dashboard': ['dash-circular', 'dash-birthday', 'dash-rfid', 'dash-enquiry']
   }
 };
 
@@ -360,6 +372,11 @@ export default function App() {
     const roleSubsRule = ALLOWED_SUBS[userRole];
     if (roleSubsRule && roleSubsRule[mod.id]) {
       allowedSubs = mod.subs.filter(sub => roleSubsRule[mod.id].includes(sub.id));
+    }
+    
+    // Explicitly restrict 'dash-admin' to Administrator role only
+    if (userRole !== 'Administrator') {
+      allowedSubs = allowedSubs.filter(sub => sub.id !== 'dash-admin');
     }
     
     return {
@@ -537,6 +554,30 @@ export default function App() {
     }
 
     if (activeMod === 'dashboard') {
+      if (activeSub === 'dash-admin' && userRole !== 'Administrator') {
+        return (
+          <div style={{ padding: 24, textAlign: 'center', background: '#fff', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+            <h2 style={{ color: '#dc2626', marginBottom: 12 }}>Access Denied</h2>
+            <p style={{ color: '#64748b', fontSize: 14 }}>You do not have permission to view the Admin Dashboard.</p>
+          </div>
+        );
+      }
+      if (activeSub === 'dash-assign' && userRole !== 'Staff/Faculty' && userRole !== 'Administrator') {
+        return (
+          <div style={{ padding: 24, textAlign: 'center', background: '#fff', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+            <h2 style={{ color: '#dc2626', marginBottom: 12 }}>Access Denied</h2>
+            <p style={{ color: '#64748b', fontSize: 14 }}>You do not have permission to view the Assignment Dashboard.</p>
+          </div>
+        );
+      }
+      if (activeSub === 'dash-account' && userRole !== 'Accounts' && userRole !== 'Administrator') {
+        return (
+          <div style={{ padding: 24, textAlign: 'center', background: '#fff', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+            <h2 style={{ color: '#dc2626', marginBottom: 12 }}>Access Denied</h2>
+            <p style={{ color: '#64748b', fontSize: 14 }}>You do not have permission to view the Account Dashboard.</p>
+          </div>
+        );
+      }
       const PageComp = (activeSub && DASH_MAP[activeSub]) ? DASH_MAP[activeSub] : HomeDashboard;
       return (
         <div>

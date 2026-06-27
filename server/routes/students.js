@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
   if (req.user.role === 'Student') {
     query = 'SELECT * FROM students WHERE scholar_no = ?';
     params = [req.user.username];
-  } else if (req.user.role !== 'Administrator' && req.user.role !== 'Staff/Faculty') {
+  } else if (req.user.role !== 'Administrator' && req.user.role !== 'Staff/Faculty' && req.user.role !== 'Accounts') {
     return res.status(403).json({ error: 'Access forbidden. Insufficient permissions.' });
   }
 

@@ -358,7 +358,7 @@ paths:
         Fetches JSON record for secondary modules under role rules:
         - **Transport role**: Allowed to read/write `transport` key.
         - **Accounts role**: Allowed to read/write `accounts` and `fees` keys.
-        - **Staff/Faculty role**: Allowed to read/write `student-attendance`, `timetable`, `lesson-plan` keys, and read `hostel`, `transport` keys.
+        - **Staff/Faculty role**: Allowed to read/write `student-attendance`, `timetable`, `lesson-plan` keys, and read `hostel` keys.
         - **Student role**: Allowed to read keys `hostel` (filtered to their details), `student-attendance` (filtered to their attendance), `timetable`, `lesson-plan`, `certificate`, `document`.
       tags:
         - Secondary Modules

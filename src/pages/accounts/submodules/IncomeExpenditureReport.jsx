@@ -1,10 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { COLLEGE, TODAY, iS, lbS, rS, TableToolbar, EmptyRow } from './accountsConfig.jsx';
 
 export default function IncomeExpenditureReport() {
   const [filter, setFilter] = useState({ college:'All', start:TODAY, end:TODAY });
   const [shown,  setShown]  = useState(false);
+  const [rows, setRows] = useState([]);
   const sf = k => e => setFilter(p => ({ ...p, [k]: e.target.value }));
+
+  const loadData = () => {
+    fetch('/api/generic/accounts/cashbook')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          calculateReport(data);
+        }
+      })
+      .catch(err => console.error('Error loading cashbook:', err));
+  };
+
+  const calculateReport = (data) => {
+    const rangeData = data.filter(r => r.date >= filter.start && r.date <= filter.end);
+    
+    // Group by head + '|' + subhead
+    const groups = {};
+    rangeData.forEach(r => {
+      const h = r.head || 'Unspecified';
+      const s = r.subhead || 'General';
+      const key = `${h}|${s}`;
+      if (!groups[key]) {
+        groups[key] = { head: h, subhead: s, income: 0, expenditure: 0 };
+      }
+      const amt = parseFloat(r.amount) || 0;
+      if (r.type === 'Credit') {
+        groups[key].income += amt;
+      } else {
+        groups[key].expenditure += amt;
+      }
+    });
+
+    const computedList = Object.values(groups).map(g => ({
+      ...g,
+      net: g.income - g.expenditure
+    }));
+
+    setRows(computedList);
+  };
+
+  useEffect(() => {
+    if (shown) {
+      loadData();
+    }
+  }, [shown, filter.start, filter.end]);
 
   return (
     <div className="hr-form">
@@ -17,12 +63,26 @@ export default function IncomeExpenditureReport() {
       </div>
       {shown && (
         <div className="table-wrap">
-          <TableToolbar />
+          <TableToolbar title="UCT ERP Income & Expenditure Report" />
           <table className="hr-table">
-            <thead><tr><th>Head</th><th>Subhead</th><th>Income (₹)</th><th>Expenditure (₹)</th><th>Net (₹)</th></tr></thead>
-            <tbody><EmptyRow cols={5} /></tbody>
+            <thead>
+              <tr><th>Head</th><th>Subhead</th><th>Income (₹)</th><th>Expenditure (₹)</th><th>Net (₹)</th></tr>
+            </thead>
+            <tbody>
+              {rows.length === 0 ? <EmptyRow cols={5} /> : rows.map((r, i) => (
+                <tr key={i}>
+                  <td>{r.head}</td>
+                  <td>{r.subhead}</td>
+                  <td>₹{r.income.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                  <td>₹{r.expenditure.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                  <td style={{ fontWeight: 600, color: r.net >= 0 ? '#16a34a' : '#dc2626' }}>
+                    ₹{r.net.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
           </table>
-          <div style={{ fontSize:13, color:'#666', marginTop:6 }}>Showing 0 entries — connect backend API to load data</div>
+          <div style={{ fontSize:13, color:'#666', marginTop:6 }}>Showing {rows.length} entries</div>
         </div>
       )}
     </div>

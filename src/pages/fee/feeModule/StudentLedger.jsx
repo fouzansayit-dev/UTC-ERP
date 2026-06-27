@@ -35,7 +35,8 @@ export default function StudentLedger() {
       fetch(`/api/generic/fees/transactions`).then(res => res.json()).catch(() => [])
     ])
       .then(([studentsList, apiTrans, genericTrans]) => {
-        const studentObj = studentsList.find(s => s.id === Number(selectedStudent));
+        const list = Array.isArray(studentsList) ? studentsList : [];
+        const studentObj = list.find(s => s.id === Number(selectedStudent));
         if (!studentObj) {
           setLedger([]);
           setLoading(false);

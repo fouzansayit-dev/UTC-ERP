@@ -19,6 +19,8 @@ import Receipt          from './submodules/Receipt.jsx';
 /* ── Enhancements ── */
 import ForexRemittance  from './submodules/ForexRemittance.jsx';
 import AgentCommission  from './submodules/AgentCommission.jsx';
+import BillingReceipt    from './submodules/BillingReceipt.jsx';
+import BankReconciliation from './submodules/BankReconciliation.jsx';
 
 /* ── Reports ── */
 import BillEntryDetails           from './submodules/BillEntryDetails.jsx';
@@ -52,6 +54,8 @@ export const ACCOUNTS_SUBMODULES = [
   { id:'acc-deposit',   label:'Bank Deposit',                     component: BankDeposit             },
   { id:'acc-withdraw',  label:'Self Withdrawal',                  component: SelfWithdrawal          },
   { id:'acc-receipt',   label:'Receipt',                          component: Receipt                 },
+  { id:'acc-billing-receipt', label:'Billing Receipt Generator',   component: BillingReceipt          },
+  { id:'acc-bank-reconcile',  label:'Bank Reconciliation Matcher', component: BankReconciliation      },
   /* Enhancements */
   { id:'acc-forex',     label:'Forex Remittance',                 component: ForexRemittance         },
   { id:'acc-commission',label:'Agent Commission Payment',         component: AgentCommission         },
